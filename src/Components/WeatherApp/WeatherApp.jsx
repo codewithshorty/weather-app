@@ -2,9 +2,25 @@
 // import loading from "../../assets/images/loading.gif";
 // import rainy from "../../assets/images/rainy.png";
 // import showy from "../../assets/images/showy.png";
+import { useState } from "react";
 import sunny from "../../assets/images/sunny.png";
 
 function WeatherApp() {
+  // state to store fetched data
+  const [data, setData] = useState({});
+
+  const API_KEY = import.meta.env.VITE_API_KEY;
+
+  const searchWeather = async () => {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=Belgrade&units=metric&appid=${API_KEY}`
+    );
+
+    const responseJson = await response.json();
+    console.log(responseJson);
+    setData(responseJson);
+  };
+
   return (
     <div className="container">
       <div className="weather-app">
@@ -15,13 +31,17 @@ function WeatherApp() {
           </div>
           <div className="search-input">
             <input type="text" name="" id="" placeholder="Search city" />
-            <i className="fa-solid fa-magnifying-glass"></i>
+            <i
+              className="fa-solid fa-magnifying-glass"
+              onClick={searchWeather}
+            ></i>
           </div>
         </div>
         <div className="weather">
           <img src={sunny} alt="sunny" />
           <div className="weather-type">Clear</div>
-          <div className="temperature">35°C</div>
+          <div className="temperature">35°</div>
+          <div className="weather-date">December 12th </div>
         </div>
         <div className="weather-data">
           <div className="humidity">
