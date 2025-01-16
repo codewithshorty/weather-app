@@ -1,5 +1,5 @@
 import cloudy from "../../assets/images/cloudy.png";
-// import loading from "../../assets/images/loading.gif";
+import loadingGif from "../../assets/images/loading.gif";
 import rainy from "../../assets/images/rainy.png";
 import snowy from "../../assets/images/snowy.png";
 import sunny from "../../assets/images/sunny.png";
@@ -13,8 +13,12 @@ function WeatherApp() {
   // store state for location
   const [location, setLocation] = useState("");
 
+  //state for loader
+  const [loading, setLoading] = useState(false);
+
   // useEffect for initial fetching the default data
   useEffect(() => {
+    setLoading(true);
     const fetchDefaultData = async () => {
       const defaultCity = "Pancevo";
       const defaultSearchTerm = await fetch(
@@ -23,6 +27,7 @@ function WeatherApp() {
       const respDefSearchTerm = await defaultSearchTerm.json();
       setData(respDefSearchTerm);
     };
+    setLoading(false);
 
     fetchDefaultData();
   }, []);
@@ -31,16 +36,24 @@ function WeatherApp() {
   const API_KEY = import.meta.env.VITE_API_KEY;
 
   const searchWeather = async () => {
+    setLoading(true);
     if (location.trim() !== "") {
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${API_KEY}`
       );
 
       const searchedTerm = await response.json();
-      setData(searchedTerm);
-      console.log(searchedTerm);
-      setLocation("");
+
+      // Checking if searched term is server status 200
+      if (searchedTerm.cod !== 200) {
+        setData({ notFound: true });
+      } else {
+        setData(searchedTerm);
+        console.log(searchedTerm);
+        setLocation("");
+      }
     }
+    setLoading(false);
   };
 
   // Handle the input Value
@@ -113,32 +126,46 @@ function WeatherApp() {
             ></i>
           </div>
         </div>
-        <div className="weather">
-          <img src={weatherDisplayImage} alt="sunny" />
-          <div className="weather-type">
-            {data.weather ? data.weather[0].main : null}
+        {loading ? (
+          <div className="loading-gif">
+            <img src={loadingGif} alt="loading" />
           </div>
-          <div className="temperature">
-            {data.main ? `${Math.floor(data.main.temp)}°` : null}
+        ) : data.notFound ? (
+          <div className="not-found">
+            Searched data not found, please try again!🤔
           </div>
-          <div className="weather-date">{new Date().toLocaleDateString()}</div>
-        </div>
-        <div className="weather-data">
-          <div className="humidity">
-            <div className="data-name">Humidity</div>
-            <i className="fa-solid fa-water"></i>
-            <div className="data">
-              {data.main ? `${Math.floor(data.main.humidity)}%` : null}
+        ) : (
+          <>
+            <div className="weather">
+              <img src={weatherDisplayImage} alt="sunny" />
+              <div className="weather-type">
+                {data.weather ? data.weather[0].main : null}
+              </div>
+              <div className="temperature">
+                {data.main ? `${Math.floor(data.main.temp)}°` : null}
+              </div>
+              <div className="weather-date">
+                {new Date().toLocaleDateString("sr-SR")}
+              </div>
             </div>
-          </div>
-          <div className="wind">
-            <div className="data-name">Wind</div>
-            <i className="fa-solid fa-wind"></i>
-            <div className="data">
-              {data.wind ? `${data.wind.speed}m/s` : null}
+            <div className="weather-data">
+              <div className="humidity">
+                <div className="data-name">Humidity</div>
+                <i className="fa-solid fa-water"></i>
+                <div className="data">
+                  {data.main ? `${Math.floor(data.main.humidity)}%` : null}
+                </div>
+              </div>
+              <div className="wind">
+                <div className="data-name">Wind</div>
+                <i className="fa-solid fa-wind"></i>
+                <div className="data">
+                  {data.wind ? `${data.wind.speed}m/s` : null}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );
