@@ -14,11 +14,7 @@
 .weather-app {
   height: 50rem;
   width: 35rem;
-  background: linear-gradient(
-    90deg,
-    rgba(233, 196, 106, 1) 0%,
-    rgba(244, 162, 97, 1) 100%
-  );
+  background-color: azure;
   border-radius: 2rem;
   box-shadow: 0 0 2rem rgba(0, 0, 0, 0.3);
   display: flex;
@@ -146,7 +142,7 @@
 }
 
 .weather-data i {
-  color: white;
+  color: black;
   font-size: 1.2rem;
   text-shadow: 0.1rem 0.1rem 1rem rgba(0, 0, 0, 0.3);
 }

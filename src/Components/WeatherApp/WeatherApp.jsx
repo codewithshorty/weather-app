@@ -1,7 +1,7 @@
-// import cloudy from "../../assets/images/cloudy.png";
+import cloudy from "../../assets/images/cloudy.png";
 // import loading from "../../assets/images/loading.gif";
-// import rainy from "../../assets/images/rainy.png";
-// import showy from "../../assets/images/showy.png";
+import rainy from "../../assets/images/rainy.png";
+import snowy from "../../assets/images/snowy.png";
 import sunny from "../../assets/images/sunny.png";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -30,7 +30,7 @@ function WeatherApp() {
   // API from .env
   const API_KEY = import.meta.env.VITE_API_KEY;
 
-  const searchWeather = async (e) => {
+  const searchWeather = async () => {
     if (location.trim() !== "") {
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${API_KEY}`
@@ -54,9 +54,43 @@ function WeatherApp() {
       searchWeather();
     }
   };
+  // Display image
+  const weatherImages = {
+    Clouds: cloudy,
+    Rain: rainy,
+    Snow: snowy,
+    Clear: sunny,
+    Haze: cloudy,
+    Mist: cloudy,
+  };
+
+  const weatherDisplayImage = data.weather
+    ? weatherImages[data.weather[0].main]
+    : null;
+
+  // Display backgoround
+  const weatherBackgrounds = {
+    Rain: `linear-gradient(270deg, rgba(9,73,121,1) 0%, rgba(0,212,255,1) 100%)
+`,
+    Snow: `linear-gradient(270deg, rgba(9,109,121,1) 0%, rgba(0,212,255,1) 50%, rgba(255,255,255,1) 100%)
+`,
+    Clear: `  linear-gradient(
+    90deg,
+    rgba(233, 196, 106, 1) 0%,
+    rgba(244, 162, 97, 1) 100%
+  )`,
+    Clouds: `linear-gradient(270deg, rgba(49,51,51,1) 0%, rgba(150,150,150,1) 50%, rgba(255,255,255,1) 100%)
+`,
+    Haze: `linear-gradient(270deg, rgba(49,51,51,1) 0%, rgba(150,150,150,1) 50%, rgba(255,255,255,1) 100%)`,
+    Mist: `linear-gradient(270deg, rgba(49,51,51,1) 0%, rgba(150,150,150,1) 50%, rgba(255,255,255,1) 100%)`,
+  };
+
+  const weatherBackground = data.weather
+    ? weatherBackgrounds[data.weather[0].main]
+    : null;
 
   return (
-    <div className="container">
+    <div className="container" style={{ backgroundImage: weatherBackground }}>
       <div className="weather-app">
         <div className="search">
           <div className="search-location">
@@ -80,7 +114,7 @@ function WeatherApp() {
           </div>
         </div>
         <div className="weather">
-          <img src={sunny} alt="sunny" />
+          <img src={weatherDisplayImage} alt="sunny" />
           <div className="weather-type">
             {data.weather ? data.weather[0].main : null}
           </div>
