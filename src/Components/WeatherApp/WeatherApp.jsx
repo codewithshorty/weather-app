@@ -49,7 +49,6 @@ function WeatherApp() {
         setData({ notFound: true });
       } else {
         setData(searchedTerm);
-        console.log(searchedTerm);
         setLocation("");
       }
     }
